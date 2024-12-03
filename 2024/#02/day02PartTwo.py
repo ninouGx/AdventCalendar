@@ -2,7 +2,7 @@ from typing import Union
 
 
 reports = []
-with open("day02/input.txt") as f:
+with open("#02/input.txt") as f:
     for line in f:
         elems = line.split()
         report = [int(elem) for elem in elems ]

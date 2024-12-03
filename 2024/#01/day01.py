@@ -1,5 +1,5 @@
 firstCol, secondCol = [], []
-with open("day01/input.txt") as f:
+with open("#01/input.txt") as f:
     for line in f:
         elems = line.split()
         firstCol.append(elems[0])
