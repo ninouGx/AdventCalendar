@@ -41,10 +41,6 @@ fn is_word_at_in_direction_in_x(
     start_col: usize,
     direction_x: (Direction, Direction)
 ) -> bool {
-    //println!("grid: {:?}", grid);
-    //println!("word: {}", word);
-    //println!("start_row: {}", start_row);
-    //println!("star_col: {}", star_col);
     let (dir1, dir2) = direction_x;
 
     let shift_start_row_1: i32 = (start_row as i32) + dir1.dy;
@@ -80,7 +76,6 @@ fn is_word_at_in_direction_in_x(
         shift_back_dx_2,
         shift_back_dy_2
     );
-    //println!("1: {}, 2: {}", first_half, second_half);
     first_half && second_half
 }
 
@@ -156,7 +151,6 @@ fn resolve_part_two(grid: &[Vec<char>]) -> usize {
                 .map(move |second_direction| (*first_direction, *second_direction))
         })
         .collect();
-    //println!("nb of pair: {}", all_directions_pairs.len());
     nb_occurences_in_x(grid, MAS, &all_directions_pairs)
 }
 
