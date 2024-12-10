@@ -1,0 +1,2 @@
+[alias]
+new-day = "run --package aoc_utils --bin new-day"

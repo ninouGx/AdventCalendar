@@ -1,0 +1,8 @@
+[package]
+name = "aoc_utils"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "new-day"
+path = "src/bin/new_day.rs"
