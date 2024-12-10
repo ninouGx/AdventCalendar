@@ -1,8 +1,8 @@
-fn part1(input: &str) -> u64 {
+fn part1(input: &str) -> usize {
     0
 }
 
-fn part2(input: &str) -> u64 {
+fn part2(input: &str) -> usize {
     0
 }
 

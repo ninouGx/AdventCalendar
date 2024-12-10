@@ -1,10 +1,14 @@
+use std::panic::Location;
 use std::path::Path;
 use std::fs::{ self, File };
 use std::io::Write;
 
+#[track_caller]
 pub fn get_input_for_day(is_test: bool) -> String {
-    let file_name = file!();
-    let day = file_name
+    let caller = Location::caller();
+    let file_path = caller.file();
+
+    let day = file_path
         .split('/')
         .last()
         .unwrap()
@@ -13,7 +17,7 @@ pub fn get_input_for_day(is_test: bool) -> String {
         .strip_suffix(".rs")
         .unwrap();
 
-    let year = env!("CARGO_PKG_NAME").strip_prefix("year_").unwrap();
+    let year = file_path.split('/').next().unwrap().strip_prefix("year_").unwrap();
 
     get_input(year, day, is_test)
 }
