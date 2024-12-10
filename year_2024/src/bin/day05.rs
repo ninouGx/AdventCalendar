@@ -1,8 +1,5 @@
 use std::str::FromStr;
 
-const INPUT: &str = include_str!("../data/day05_input.txt");
-//const INPUT: &str = include_str!("../data/test/day05_test_input.txt");
-
 struct PageOrder {
     before_page: usize,
     after_page: usize,
@@ -106,16 +103,8 @@ fn sum_middle_page(
         .sum()
 }
 
-fn resolve_part_one(pages: &Vec<PageOrder>, updates: &Vec<UpdateSequence>) -> usize {
-    sum_middle_page(updates, pages, true)
-}
-
-fn resolve_part_two(pages: &Vec<PageOrder>, updates: &Vec<UpdateSequence>) -> usize {
-    sum_middle_page(updates, pages, false)
-}
-
-fn main() {
-    let parts: Vec<&str> = INPUT.split("\n\n").collect();
+fn retrieve_data(input: &str) -> (Vec<PageOrder>, Vec<UpdateSequence>) {
+    let parts: Vec<&str> = input.split("\n\n").collect();
 
     let pages: Vec<PageOrder> = parts[0]
         .lines()
@@ -133,9 +122,41 @@ fn main() {
         })
         .collect();
 
-    let sum_middle_pages = resolve_part_one(&pages, &updates);
-    println!("Middle Page Sum: {}", sum_middle_pages);
+    (pages, updates)
+}
 
-    let sum_middle_non_ordered_pages = resolve_part_two(&pages, &updates);
-    println!("Middle Non Ordered Page Sum: {}", sum_middle_non_ordered_pages);
+fn part1(input: &str) -> usize {
+    let (pages, updates) = retrieve_data(input);
+    sum_middle_page(&updates, &pages, true)
+}
+
+fn part2(input: &str) -> usize {
+    let (pages, updates) = retrieve_data(input);
+    sum_middle_page(&updates, &pages, false)
+}
+
+fn main() {
+    let is_test = false;
+
+    let input = aoc_utils::get_input_for_day(is_test);
+
+    println!("Part 1: {}", part1(&input));
+    println!("Part 2: {}", part2(&input));
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const TEST_INPUT: &str = "";
+
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(TEST_INPUT), 0);
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(TEST_INPUT), 0);
+    }
 }
