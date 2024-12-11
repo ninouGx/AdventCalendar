@@ -1,7 +1,8 @@
 use std::collections::HashSet;
 use std::ops::Add;
-use std::time::Instant;
-use rayon::prelude::*;
+use rayon::iter::ParallelIterator;
+use rayon::prelude::IntoParallelIterator;
+use progress_timer::time_function;
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
 enum Direction {
@@ -182,15 +183,8 @@ fn main() {
 
     let input = aoc_utils::get_input_for_day(is_test);
 
-    let start_part1 = Instant::now();
-    println!("Part 1: {}", part1(&input));
-    let duration_part1 = start_part1.elapsed();
-    println!("Time taken for Part 1: {:?}", duration_part1);
-
-    let start_part2 = Instant::now();
-    println!("Part 2: {}", part2(&input));
-    let duration_part2 = start_part2.elapsed();
-    println!("Time taken for Part 2: {:?}", duration_part2);
+    time_function("Part 1", 5, || part1(&input));
+    time_function("Part 2", 5, || part2(&input));
 }
 
 #[cfg(test)]
