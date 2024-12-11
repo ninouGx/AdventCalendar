@@ -1,6 +1,9 @@
+use std::collections::HashSet;
 use std::ops::Add;
+use std::time::Instant;
+use rayon::prelude::*;
 
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
 enum Direction {
     UP = 0,
     RIGHT = 1,
@@ -28,14 +31,14 @@ impl Direction {
     }
 }
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Clone, Copy)]
 enum MapElement {
     EMPTY,
     OBSTACLE,
     PATH,
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, PartialEq, Eq, Hash)]
 struct Coordinate {
     row: isize,
     col: isize,
@@ -53,30 +56,32 @@ struct MapData {
     pos: Coordinate,
 }
 
-fn retrieve_map(input: &str) -> MapData {
-    let mut coord = Coordinate { row: 0, col: 0 };
-    let map = input
-        .lines()
-        .enumerate()
-        .map(|(x, line)|
-            line
-                .chars()
-                .enumerate()
-                .map(|(y, c)| {
-                    match c {
-                        '^' => {
-                            coord = Coordinate { row: x as isize, col: y as isize };
-                            MapElement::PATH
+impl MapData {
+    fn new(input: &str) -> Self {
+        let mut coord = Coordinate { row: 0, col: 0 };
+        let map = input
+            .lines()
+            .enumerate()
+            .map(|(x, line)|
+                line
+                    .chars()
+                    .enumerate()
+                    .map(|(y, c)| {
+                        match c {
+                            '^' => {
+                                coord = Coordinate { row: x as isize, col: y as isize };
+                                MapElement::PATH
+                            }
+                            '#' => MapElement::OBSTACLE,
+                            _ => MapElement::EMPTY,
                         }
-                        '#' => MapElement::OBSTACLE,
-                        _ => MapElement::EMPTY,
-                    }
-                })
-                .collect()
-        )
-        .collect();
+                    })
+                    .collect()
+            )
+            .collect();
 
-    MapData { matrix: map, pos: coord }
+        MapData { matrix: map, pos: coord }
+    }
 }
 
 fn move_in_direction(dir: Direction, map_data: &mut MapData) -> bool {
@@ -108,7 +113,7 @@ fn can_move_outside(dir: Direction, map_data: &mut MapData) -> bool {
 
 fn part1(input: &str) -> usize {
     let mut current_dir = Direction::UP;
-    let mut map: MapData = retrieve_map(input);
+    let mut map = MapData::new(input);
     while !can_move_outside(current_dir, &mut map) {
         if !move_in_direction(current_dir, &mut map) {
             current_dir = current_dir.rotate_right();
@@ -121,8 +126,55 @@ fn part1(input: &str) -> usize {
         .count()
 }
 
-fn part2(_input: &str) -> usize {
-    0
+fn is_loop_with_obstacle(input: &str, obstacle_pos: Coordinate) -> bool {
+    let mut map = MapData::new(input);
+
+    if obstacle_pos == map.pos {
+        return false;
+    }
+
+    map.matrix[obstacle_pos.row as usize][obstacle_pos.col as usize] = MapElement::OBSTACLE;
+
+    let mut visited = HashSet::new();
+    let mut current_dir = Direction::UP;
+
+    loop {
+        let current_state = (map.pos, current_dir);
+        if visited.contains(&current_state) {
+            return true;
+        }
+        visited.insert(current_state);
+
+        if can_move_outside(current_dir, &mut map) {
+            return false;
+        }
+
+        if !move_in_direction(current_dir, &mut map) {
+            current_dir = current_dir.rotate_right();
+        }
+    }
+}
+
+fn part2(input: &str) -> usize {
+    let map_data = MapData::new(input);
+    let empty_positions: Vec<Coordinate> = map_data.matrix
+        .iter()
+        .enumerate()
+        .flat_map(|(row, line)| {
+            line.iter()
+                .enumerate()
+                .filter(|(_, &elem)| elem == MapElement::EMPTY)
+                .map(move |(col, _)| Coordinate {
+                    row: row as isize,
+                    col: col as isize,
+                })
+        })
+        .collect();
+
+    empty_positions
+        .into_par_iter()
+        .filter(|&pos| is_loop_with_obstacle(input, pos))
+        .count()
 }
 
 fn main() {
@@ -130,8 +182,15 @@ fn main() {
 
     let input = aoc_utils::get_input_for_day(is_test);
 
+    let start_part1 = Instant::now();
     println!("Part 1: {}", part1(&input));
+    let duration_part1 = start_part1.elapsed();
+    println!("Time taken for Part 1: {:?}", duration_part1);
+
+    let start_part2 = Instant::now();
     println!("Part 2: {}", part2(&input));
+    let duration_part2 = start_part2.elapsed();
+    println!("Time taken for Part 2: {:?}", duration_part2);
 }
 
 #[cfg(test)]

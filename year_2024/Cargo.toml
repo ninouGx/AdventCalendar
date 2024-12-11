@@ -6,3 +6,4 @@ resolver = "2"
 
 [dependencies]
 aoc_utils = { path = "../aoc_utils" }
+rayon = "1.10.0"
