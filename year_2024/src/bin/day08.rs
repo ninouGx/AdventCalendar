@@ -195,6 +195,7 @@ fn main() {
         || part1(&input)
     );
     println!("Part 1: {}", result_part_1);
+
     let result_part_2 = time_function(
         "Part 2",
         Duration::from_secs(5),
