@@ -1,5 +1,6 @@
 use std::collections::HashSet;
 use std::ops::Add;
+use std::time::Duration;
 use rayon::iter::ParallelIterator;
 use rayon::prelude::IntoParallelIterator;
 use progress_timer::time_function;
@@ -183,8 +184,21 @@ fn main() {
 
     let input = aoc_utils::get_input_for_day(is_test);
 
-    time_function("Part 1", 5, || part1(&input));
-    time_function("Part 2", 5, || part2(&input));
+    let result_part_1 = time_function(
+        "Part 1",
+        Duration::from_secs(5),
+        Duration::from_millis(100),
+        || part1(&input)
+    );
+    println!("Part 1: {}", result_part_1);
+
+    let result_part_2 = time_function(
+        "Part 2",
+        Duration::from_secs(5),
+        Duration::from_millis(100),
+        || part2(&input)
+    );
+    println!("Part 2: {}", result_part_2);
 }
 
 #[cfg(test)]
