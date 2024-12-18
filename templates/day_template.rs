@@ -1,3 +1,4 @@
+use std::time::Duration;
 use progress_timer::time_function;
 
 fn part1(input: &str) -> usize {
